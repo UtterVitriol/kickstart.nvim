@@ -282,11 +282,18 @@ require('lazy').setup({
       },
     },
   },
+
+  -- Cool close for brackets, quites, etc.
   {
     'm4xshen/autoclose.nvim',
     config = function()
       require('autoclose').setup()
     end,
+  },
+
+  -- alt-p alt-n to move between same words under cursor
+  {
+    'RRethy/vim-illuminate',
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
