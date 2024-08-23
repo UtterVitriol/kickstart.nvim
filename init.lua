@@ -256,16 +256,25 @@ require('lazy').setup({
   },
 
   -- Cool close for brackets, quites, etc.
-  {
-    'm4xshen/autoclose.nvim',
-    config = function()
-      require('autoclose').setup()
-    end,
-  },
+  -- {
+  --   'm4xshen/autoclose.nvim',
+  --   config = function()
+  --     require('autoclose').setup()
+  --   end,
+  -- },
 
   -- alt-p alt-n to move between same words under cursor
   {
     'RRethy/vim-illuminate',
+  },
+
+  -- provides function signature preview and param highlighting
+  {
+    'ray-x/lsp_signature.nvim',
+    config = function(_, opts)
+      opts.toggle_key = '<M-x>'
+      require('lsp_signature').setup(opts)
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -581,11 +590,15 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
         -- gopls = {},
         pyright = {},
         flake8 = {},
-        clangd = {},
+        clangd = {
+          cmd = {
+            'clangd',
+            '-header-insertion=never',
+          },
+        },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -902,7 +915,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
