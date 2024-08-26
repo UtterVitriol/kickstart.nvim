@@ -83,8 +83,13 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
+vim.filetype.add {
+  extension = {
+    nasm = 'asm',
+    inc = 'asm',
+  },
+}
 vim.g.terminal_emulator = 'pwsh'
-vim.g.tabstop = 4
 vim.opt.shell = 'pwsh'
 vim.opt.shellcmdflag = '-nologo -ExecutionPolicy RemoteSigned -command'
 vim.opt.shellxquote = ''
@@ -102,6 +107,8 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 -- Make line numbers default
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
