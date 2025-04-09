@@ -680,7 +680,14 @@ require('lazy').setup({
       require('mason').setup()
       require('mason-lspconfig').setup { ensure_installed = { 'pyright' } }
       require('lspconfig').pyright.setup {}
-      require('lspconfig').clangd.setup {}
+      require('lspconfig').clangd.setup {
+        init_options = {
+          fallbackFlags = {
+            '--std=c++20',
+            -- '-IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\km',
+          },
+        },
+      }
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
