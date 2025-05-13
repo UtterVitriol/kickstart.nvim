@@ -111,7 +111,8 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.o.expandtab = true
 -- Make line numbers default
-vim.o.number = true
+--vim.opt.number = true
+vim.opt.rnu = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 -- vim.o.relativenumber = true
@@ -784,11 +785,26 @@ require('lazy').setup({
       -- other tools, you can run
       --    :Mason
       --
+<<<<<<< HEAD
       -- You can press `g?` for help in this menu.
       --
       -- `mason` had to be setup earlier: to configure its options see the
       -- `dependencies` table for `nvim-lspconfig` above.
       --
+=======
+      --  You can press `g?` for help in this menu.
+      require('mason').setup()
+      require('mason-lspconfig').setup { ensure_installed = { 'pyright' } }
+      require('lspconfig').pyright.setup {}
+      require('lspconfig').clangd.setup {
+        init_options = {
+          fallbackFlags = {
+            '--std=c++20',
+          },
+        },
+      }
+
+>>>>>>> ee8767c (ree)
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
