@@ -111,7 +111,8 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.o.expandtab = true
 -- Make line numbers default
-vim.opt.number = true
+--vim.opt.number = true
+vim.opt.rnu = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 -- vim.opt.relativenumber = true
@@ -689,7 +690,6 @@ require('lazy').setup({
         init_options = {
           fallbackFlags = {
             '--std=c++20',
-            -- '-IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\km',
           },
         },
       }
