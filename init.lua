@@ -109,6 +109,7 @@ vim.g.have_nerd_font = true
 
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+vim.o.expandtab = true
 -- Make line numbers default
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -179,6 +180,10 @@ vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+
+-- Escape keybinds
+vim.keymap.set('i', 'jj', '<Esc>', { noremap = true })
+vim.keymap.set('i', 'jk', '<Esc>', { noremap = true })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
