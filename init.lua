@@ -83,16 +83,7 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
-vim.filetype.add {
-  extension = {
-    nasm = 'asm',
-    inc = 'asm',
-  },
-}
-vim.g.terminal_emulator = 'pwsh'
-vim.opt.shell = 'pwsh'
-vim.opt.shellcmdflag = '-nologo -ExecutionPolicy RemoteSigned -command'
-vim.opt.shellxquote = ''
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -107,15 +98,16 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- Tabs bad
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.o.expandtab = true
+
 -- Make line numbers default
---vim.opt.number = true
-vim.opt.rnu = true
+vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -182,7 +174,10 @@ vim.o.confirm = true
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
--- Escape keybinds
+vim.keymap.set('n', '<leader>bg', ':CMakeSelectBuildType<CR>', { desc = '[G] Generate Project' })
+vim.keymap.set('n', '<leader>bb', ':CMakeBuild<CR>', { desc = '[B] Build Project' })
+vim.keymap.set('n', '<leader>br', ':CMakeRun<CR>', { desc = '[R] Run Project' })
+
 vim.keymap.set('i', 'jj', '<Esc>', { noremap = true })
 vim.keymap.set('i', 'jk', '<Esc>', { noremap = true })
 
@@ -263,6 +258,22 @@ rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  --cmake tools????
+  { 'Civitasv/cmake-tools.nvim', opts = {} },
+
+  -- Allows editing of filesystem :edit . or :Oil --float .
+  {
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {},
+    -- Optional dependencies
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+    lazy = false,
+  },
+
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
@@ -299,31 +310,6 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
-  },
-
-  {
-    'preservim/nerdcommenter',
-  },
-  -- Cool close for brackets, quites, etc.
-  -- {
-  --   'm4xshen/autoclose.nvim',
-  --   config = function()
-  --     require('autoclose').setup()
-  --   end,
-  -- },
-
-  -- alt-p alt-n to move between same words under cursor
-  {
-    'RRethy/vim-illuminate',
-  },
-
-  -- provides function signature preview and param highlighting
-  {
-    'ray-x/lsp_signature.nvim',
-    config = function(_, opts)
-      opts.toggle_key = '<M-x>'
-      require('lsp_signature').setup(opts)
-    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -386,6 +372,7 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
+        { '<leader>b', group = '[B]uild and run CMake project' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
@@ -478,15 +465,16 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
-        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
-          previewer = false,
-        })
-      end, { desc = '[/] Fuzzily search in current buffer' })
+      -- vim.keymap.set('n', '<leader>/', function()
+      --   -- You can pass additional configuration to Telescope to change the theme, layout, etc.
+      --   builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+      --     winblend = 10,
+      --     previewer = false,
+      --   })
+      -- end, { desc = '[/] Fuzzily search in current buffer' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
@@ -713,46 +701,13 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- gopls = {},
-        pyright = {},
-        flake8 = {},
         clangd = {
-          -- I made these changes because clangd would crash every once in a while and
-          -- I couldn't really figure it out. I haven't yet had a crash with these changes.
-          keys = {
-            { '<leader>ch', '<cmd>ClangdSwitchSourceHeader<cr>', desc = 'Switch Source/Header (C/C++)' },
-          },
-          root_dir = function(fname)
-            return require('lspconfig.util').root_pattern(
-              'Makefile',
-              'configure.ac',
-              'configure.in',
-              'config.h.in',
-              'meson.build',
-              'meson_options.txt',
-              'build.ninja'
-            )(fname) or require('lspconfig.util').root_pattern('compile_commands.json', 'compile_flags.txt')(fname) or require('lspconfig.util').find_git_ancestor(
-              fname
-            )
-          end,
-          capabilities = {
-            offsetEncoding = { 'utf-16' },
-          },
           cmd = {
-            'clangd',
-            '--background-index',
-            '--clang-tidy',
             '--header-insertion=never',
-            '--completion-style=detailed',
-            '--function-arg-placeholders',
-            '--fallback-style=llvm',
-          },
-          init_options = {
-            usePlaceholders = true,
-            completeUnimported = true,
-            clangdFileStatus = true,
           },
         },
+        -- gopls = {},
+        -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -785,26 +740,11 @@ require('lazy').setup({
       -- other tools, you can run
       --    :Mason
       --
-<<<<<<< HEAD
       -- You can press `g?` for help in this menu.
       --
       -- `mason` had to be setup earlier: to configure its options see the
       -- `dependencies` table for `nvim-lspconfig` above.
       --
-=======
-      --  You can press `g?` for help in this menu.
-      require('mason').setup()
-      require('mason-lspconfig').setup { ensure_installed = { 'pyright' } }
-      require('lspconfig').pyright.setup {}
-      require('lspconfig').clangd.setup {
-        init_options = {
-          fallbackFlags = {
-            '--std=c++20',
-          },
-        },
-      }
-
->>>>>>> ee8767c (ree)
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
@@ -862,7 +802,6 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        python = { 'autopep8' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -930,13 +869,12 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        preset = 'super-tab',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
       },
 
-<<<<<<< HEAD
       appearance = {
         -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
         -- Adjusts spacing to ensure icons are aligned
@@ -948,19 +886,6 @@ require('lazy').setup({
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
       },
-=======
-          -- Accept ([y]es) the completion.
-          --  This will auto-import if your LSP supports it.
-          --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
-          ['<Tab>'] = cmp.mapping.confirm { select = true },
-
-          -- If you prefer more traditional completion keymaps,
-          -- you can uncomment the following lines
-          -- ['<CR>'] = cmp.mapping.confirm { select = true },
-          --['<Tab>'] = cmp.mapping.select_next_item(),
-          --['<S-Tab>'] = cmp.mapping.select_prev_item(),
->>>>>>> 9a6e94c (ree)
 
       sources = {
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
@@ -1083,7 +1008,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
@@ -1120,6 +1045,8 @@ require('lazy').setup({
     },
   },
 })
+
+require('oil').setup()
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
