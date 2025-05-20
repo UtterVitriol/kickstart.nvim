@@ -174,9 +174,11 @@ vim.o.confirm = true
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
-vim.keymap.set('n', '<leader>bg', ':CMakeSelectBuildType<CR>', { desc = '[G] Generate Project' })
-vim.keymap.set('n', '<leader>bb', ':CMakeBuild<CR>', { desc = '[B] Build Project' })
-vim.keymap.set('n', '<leader>br', ':CMakeRun<CR>', { desc = '[R] Run Project' })
+vim.keymap.set('n', '<leader>bg', ':CMakeSelectBuildType<CR>', { desc = '[G]enerate Project' })
+vim.keymap.set('n', '<leader>bb', ':CMakeBuild<CR>', { desc = '[B]uild Project' })
+vim.keymap.set('n', '<leader>br', ':CMakeRun<CR>', { desc = '[R]un Project' })
+vim.keymap.set('n', '<leader>bs', ':CMakeSelectBuildType<CR>', { desc = '[S]elect Build Type' })
+vim.keymap.set('n', '<leader>bt', ':CMakeSelectBuildTarget<CR>', { desc = 'Select [T]arget' })
 
 vim.keymap.set('i', 'jj', '<Esc>', { noremap = true })
 vim.keymap.set('i', 'jk', '<Esc>', { noremap = true })
@@ -703,6 +705,7 @@ require('lazy').setup({
       local servers = {
         clangd = {
           cmd = {
+            'clangd',
             '--header-insertion=never',
           },
         },
@@ -734,6 +737,13 @@ require('lazy').setup({
         },
       }
 
+      vim.lsp.config('clangd', {
+        cmd = {
+          'clangd',
+          '--header-insertion=never',
+        },
+      })
+
       -- Ensure the servers and tools above are installed
       --
       -- To check the current status of installed tools and/or manually install
@@ -754,18 +764,19 @@ require('lazy').setup({
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
+        automatic_enable = true,
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
+        -- automatic_installation = false,
+        -- handlers = {
+        --   function(server_name)
+        --     local server = servers[server_name] or {}
+        --     -- This handles overriding only values explicitly passed
+        --     -- by the server configuration above. Useful when disabling
+        --     -- certain features of an LSP (for example, turning off formatting for ts_ls)
+        --     server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        --     require('lspconfig')[server_name].setup(server)
+        --   end,
+        -- },
       }
     end,
   },
