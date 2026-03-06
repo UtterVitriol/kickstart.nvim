@@ -98,6 +98,8 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+vim.o.shell = 'pwsh'
+
 -- Tabs bad
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
@@ -621,6 +623,7 @@ require('lazy').setup({
         },
         -- gopls = {},
         pyright = {},
+        omnisharp = {},
         -- rust_analyzer = {},
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
