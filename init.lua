@@ -621,9 +621,9 @@ require('lazy').setup({
             '--header-insertion=never',
           },
         },
-        -- gopls = {},
         pyright = {},
         omnisharp = {},
+        -- gopls = {},
         -- rust_analyzer = {},
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -832,6 +832,12 @@ require('lazy').setup({
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
+        on_highlights = function(hl, c)
+          hl.LineNr = { fg = c.teal }
+          hl.LineNrAbove = { fg = c.teal }
+          hl.LineNrBelow = { fg = c.teal }
+          hl.Comment = { fg = '#deabdb' }
+        end,
       }
 
       -- Load the colorscheme here.

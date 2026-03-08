@@ -21,10 +21,19 @@ return {
     lazy = false,
   },
 
+  -- Runner stuff. Using for dotnet building
   {
     'stevearc/overseer.nvim',
     ---@module 'overseer'
     ---@type overseer.SetupOpts
     opts = {},
   },
+
+  {
+    "TheLeoP/powershell.nvim",
+    opts = {
+      bundle_path = vim.fn.stdpath("data") .. "/mason/packages/powershell-editor-services",
+    },
+  }
+
 }

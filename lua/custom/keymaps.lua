@@ -19,6 +19,14 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+-- require('tokyonight').setup {
+--   on_highlights = function(hl, c)
+--     hl.LineNr = { fg = 'c.blue5' }
+--     hl.LineNrAbove = { fg = 'c.blue5' }
+--     hl.LineNrBelow = { fg = 'c.blue5' }
+--   end,
+-- }
+
 -- vim.api.nvim_create_autocmd('FileType', {
 --   pattern = { 'c', 'cpp' },
 --   callback = function()
